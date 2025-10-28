@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-test-svc
+spec:
+  selector:
+    app: frontend-test
+  ports:
+  - port: 80
+    targetPort: 80

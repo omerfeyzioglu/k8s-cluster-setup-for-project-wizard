@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-api-prod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-api-prod
+  template:
+    metadata:
+      labels:
+        app: backend-api-prod
+    spec:
+      containers:
+      - name: backend-api
+        # CI pipeline'ınız bu satırı güncelleyecek
+        image: docker.io/omerfeyzioglu/projectwizard-backend-api:initial-tag
+        ports:
+        - containerPort: 8080 # .NET'in çalıştığı port

@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend-test
+  template:
+    metadata:
+      labels:
+        app: frontend-test
+    spec:
+      containers:
+      - name: frontend
+        # CI pipeline'ınız bu satırı güncelleyecek
+        image: docker.io/omerfeyzioglu/projectwizard-frontend:initial-tag
+        ports:
+        - containerPort: 80 # Nginx portu

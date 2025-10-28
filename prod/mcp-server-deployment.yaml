@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mcp-server-prod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mcp-server-prod
+  template:
+    metadata:
+      labels:
+        app: mcp-server-prod
+    spec:
+      containers:
+      - name: mcp-server
+        # CI pipeline'ınız bu satırı güncelleyecek
+        image: docker.io/omerfeyzioglu/projectwizard-mcp-server:initial-tag
+        ports:
+        - containerPort: 8081 # Dockerfile'da 8081 demiştik

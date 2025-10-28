@@ -15,6 +15,6 @@ spec:
       containers:
       - name: frontend
         # CI pipeline'ınız bu satırı güncelleyecek
-        image: docker.io/omerfeyzioglu/projectwizard-frontend:initial-tag
+        image: docker.io/omerfeyzioglu/projectwizard-frontend:develop-65bb987
         ports:
         - containerPort: 80 # Nginx portu

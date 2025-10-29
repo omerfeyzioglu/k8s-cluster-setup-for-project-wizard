@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: common-db
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: git@github.com:omerfeyzioglu/k8s-cluster-setup-for-project-wizard.git
+    targetRevision: main # DB şeması gibi altyapı main'den yönetilir
+    path: common
+  destination:
+    server: https://kubernetes.default.svc
+    # DB'yi kendi namespace'ine kurmak iyi bir pratiktir
+    namespace: database 
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    # StatefulSet gibi kritik altyapılar için Retry eklemek iyi olabilir
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m

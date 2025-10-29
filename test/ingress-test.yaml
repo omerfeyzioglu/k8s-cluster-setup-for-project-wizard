@@ -13,25 +13,25 @@ spec:
       paths:
       # 1. Backend API: /api/ ile başlayanları yakala
       - path: /api(/|$)(.*) 
-        # pathType Prefix -> ImplementationSpecific olarak değiştirildi
         pathType: ImplementationSpecific 
         backend:
           service:
             name: backend-api-test-svc
             port:
-              number: 8080 
+              # Pod portu (8080) yerine Service portunu (80) kullanalım
+              number: 80 
       # 2. MCP Server: /mcp/ ile başlayanları yakala
       - path: /mcp(/|$)(.*) 
-        # pathType Prefix -> ImplementationSpecific olarak değiştirildi
         pathType: ImplementationSpecific 
         backend:
           service:
             name: mcp-server-test-svc
             port:
+              # Pod portu (8081) yerine Service portunu (8081) kullanalım
+              # (MCP Service'ini 8081 portunda oluşturmuştuk)
               number: 8081 
       # 3. Frontend: Diğer tüm yolları yakala
       - path: /()(.*) 
-        # pathType Prefix -> ImplementationSpecific olarak değiştirildi
         pathType: ImplementationSpecific 
         backend:
           service:

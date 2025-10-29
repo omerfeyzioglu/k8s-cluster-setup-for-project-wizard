@@ -1,37 +1,44 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: wizard-test-ingress
+  name: wizard-test-ingress # İsim aynı kalabilir veya '-v2' ekleyebilirsiniz
   namespace: test
   annotations:
-    # Bu kuralı Nginx Ingress Controller'ın kullanmasını sağlıyoruz
-    kubernetes.io/ingress.class: "nginx" 
+    kubernetes.io/ingress.class: "nginx"
+    # --- YENİ EKLENEN ANOTASYON ---
+    # Bu anotasyon, path'teki yakalanan grubu ($2) kullanarak
+    # /api/ veya /mcp/ ön ekini kaldırır.
+    nginx.ingress.kubernetes.io/rewrite-target: /$2 
 spec:
   rules:
   - host: test.wizard.local
     http:
       paths:
-      # 1. Frontend: Ana kök yolu (/) Frontend Service'e yönlendirir
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: frontend-test-svc
-            port:
-              number: 80
-      # 2. Backend API: Tüm /api/* isteklerini Backend Service'e yönlendirir
-      - path: /api
+      # 1. Backend API: /api/ ile başlayanları yakala
+      - path: /api(/|$)(.*) # Grup 1: /api(/|$), Grup 2: (.*)
         pathType: Prefix
         backend:
           service:
             name: backend-api-test-svc
             port:
-              number: 8080
-      # 3. MCP Server: Tüm /mcp/* isteklerini MCP Service'e yönlendirir (Varsayılan port 8081)
-      - path: /mcp
+              # Service portu 80 olabilir ama targetPort 8080 idi, Service'i kontrol edelim.
+              # Doğrudan pod portuna yönlendirmek daha garantili:
+              number: 8080 # Backend pod'unun portu
+      # 2. MCP Server: /mcp/ ile başlayanları yakala
+      - path: /mcp(/|$)(.*) # Grup 1: /mcp(/|$), Grup 2: (.*)
         pathType: Prefix
         backend:
           service:
             name: mcp-server-test-svc
             port:
-              number: 8081
+              # Doğrudan pod portuna yönlendirelim:
+              number: 8081 # MCP pod'unun portu
+      # 3. Frontend: Diğer tüm yolları yakala (en sona koymak önemlidir)
+      - path: /()(.*) # Grup 1: /(), Grup 2: (.*) - Rewrite için gerekli
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend-test-svc
+            port:
+              number: 80 # Frontend (Nginx) pod'unun portu
+

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mcp-server-test-svc # Ingress kuralının aradığı isim
+  namespace: test
+spec:
+  selector:
+    app: mcp-server-test # mcp-server pod'larının etiketiyle eşleşmeli
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8081 # Servisin K8s içinde dinleyeceği port
+    targetPort: 8081 # Pod'un içindeki 8081 portuna yönlendir

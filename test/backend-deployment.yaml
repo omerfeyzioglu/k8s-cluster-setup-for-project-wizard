@@ -16,6 +16,13 @@ spec:
       - name: backend-api
         # CI pipeline'ınız bu satırı güncelleyecek
         image: docker.io/omerfeyzioglu/projectwizard-backend-api:develop-c1b5170
-        image: docker.io/omerfeyzioglu/projectwizard-backend-api:develop-c1b5170
         ports:
         - containerPort: 8080 # .NET'in çalıştığı port
+        env:
+        - name: ConnectionStrings__DefaultConnection 
+          valueFrom:
+            secretKeyRef:
+              name: mssql-test-secret 
+              key: connectionString
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development

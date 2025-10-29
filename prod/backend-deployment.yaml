@@ -18,3 +18,11 @@ spec:
         image: docker.io/omerfeyzioglu/projectwizard-backend-api:initial-tag
         ports:
         - containerPort: 8080 # .NET'in çalıştığı port
+        env:
+        - name: ConnectionStrings__DefaultConnection 
+          valueFrom:
+            secretKeyRef:
+              name: mssql-prod-secret 
+              key: connectionString
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Production

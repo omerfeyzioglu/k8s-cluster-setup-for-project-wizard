@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  # Bu PVC'nin adı - StatefulSet bunu kullanacak
+  name: mssql-common-data 
+spec:
+  accessModes:
+    - ReadWriteOnce # Tek pod okuyup yazabilir
+  resources:
+    requests:
+      storage: 5Gi # Lokal için 5GB disk alanı yeterli
+  # Docker Desktop'ın varsayılan disk sağlayıcısını kullan
+  storageClassName: hostpath

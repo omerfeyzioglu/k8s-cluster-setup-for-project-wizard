@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mssql-common-server
+spec:
+  serviceName: mssql-common-svc # Bağlı olduğu Service'in adı
+  replicas: 1 # Sadece bir kopya çalışacak
+  selector:
+    matchLabels:
+      app: mssql-common # Bu etiketle eşleşen podları yönetecek
+  template:
+    metadata:
+      labels:
+        app: mssql-common # Pod'a bu etiketi ver
+    spec:
+      terminationGracePeriodSeconds: 10
+      # Güvenlik Context'i: MSSQL imajı bazen root olmayan kullanıcı gerektirir
+      securityContext:
+         fsGroup: 10001 
+         runAsUser: 10001
+         runAsNonRoot: true
+      containers:
+      - name: mssql
+        image: mcr.microsoft.com/mssql/server:2022-latest # Resmi MSSQL imajı
+        ports:
+        - containerPort: 1433
+        env:
+        - name: ACCEPT_EULA
+          value: "Y"
+        - name: MSSQL_PID 
+          value: "Developer" # Lokal kullanım için Developer sürümü
+        - name: MSSQL_SA_PASSWORD 
+          # ŞİFREYİ SECRET'TAN ALMAK BEST PRACTICE'TİR. 
+          # Şimdilik simülasyon için direkt yazıyoruz, sonra Secret'a taşıyabiliriz.
+          value: "SifrenizCokGuv_1" 
+        volumeMounts:
+        - name: mssql-data # Aşağıdaki volumeClaimTemplates ile eşleşen isim
+          mountPath: /var/opt/mssql # MSSQL verilerini bu diske yazacak
+  # StatefulSet, PVC'yi otomatik olarak oluşturmak için bu şablonu kullanır
+  volumeClaimTemplates: 
+  - metadata:
+      name: mssql-data # volumeMounts'daki isimle aynı olmalı
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: hostpath
+      resources:
+        requests:
+          storage: 5Gi # PVC'deki ile aynı boyutta olmalı

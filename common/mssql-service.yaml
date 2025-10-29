@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mssql-common-svc # StatefulSet'in serviceName ile eşleşmeli
+spec:
+  selector:
+    app: mssql-common # StatefulSet'in pod etiketiyle eşleşmeli
+  ports:
+  - protocol: TCP
+    port: 1433       # Servisin dinleyeceği port (K8s iç DNS'i için)
+    targetPort: 1433 # Pod'un 1433 portuna yönlendir
+  # StatefulSet için ClusterIP=None (headless) önerilir ama DNS için ClusterIP daha basit.
+  type: ClusterIP

@@ -1,36 +1,39 @@
-apiVersion: networking.k8_io/v1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: wizard-test-ingress 
   namespace: test
   annotations:
-    kubernetes.io/ingress.class: "nginx"
-    # Rewrite kuralı aynı kalıyor
-    nginx.ingress.kubernetes.io/rewrite-target: /$2 
+    # Sadece Nginx Ingress Controller'ı kullanacağımızı belirtiyoruz
+    kubernetes.io/ingress.class: "nginx" 
+    # Rewrite anotasyonu kaldırıldı
 spec:
   rules:
   - host: test.wizard.local
     http:
       paths:
-      # 1. Backend API: /api/'den sonraki her şeyi yakala
-      - path: /api/(.*) # Grup 1: /api/, Grup 2: (.*)
-        pathType: ImplementationSpecific 
+      # 1. Backend API: /api ile başlayan tüm istekleri yönlendirir
+      #    İstek, backend'e /api/... olarak gider
+      - path: /api
+        pathType: Prefix 
         backend:
           service:
             name: backend-api-test-svc
             port:
               number: 80 
-      # 2. MCP Server: /mcp/'den sonraki her şeyi yakala
-      - path: /mcp/(.*) # Grup 1: /mcp/, Grup 2: (.*)
-        pathType: ImplementationSpecific 
+      # 2. MCP Server: /mcp ile başlayan tüm istekleri yönlendirir
+      #    İstek, mcp'ye /mcp/... olarak gider
+      - path: /mcp
+        pathType: Prefix 
         backend:
           service:
             name: mcp-server-test-svc
             port:
               number: 8081 
-      # 3. Frontend: Kök yoldan sonraki her şeyi yakala
-      - path: /(.*)   # Grup 1: /, Grup 2: (.*) - En sona koymak önemli
-        pathType: ImplementationSpecific 
+      # 3. Frontend: Kök yola gelen istekleri yönlendirir
+      #    Diğer tüm istekler de buraya düşebilir
+      - path: /
+        pathType: Prefix 
         backend:
           service:
             name: frontend-test-svc

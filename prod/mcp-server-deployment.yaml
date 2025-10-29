@@ -15,6 +15,6 @@ spec:
       containers:
       - name: mcp-server
         # CI pipeline'ınız bu satırı güncelleyecek
-        image: docker.io/omerfeyzioglu/projectwizard-mcp-server:initial-tag
+        image: docker.io/omerfeyzioglu/projectwizard-mcp-server:main-fe45211
         ports:
         - containerPort: 8081 # Dockerfile'da 8081 demiştik

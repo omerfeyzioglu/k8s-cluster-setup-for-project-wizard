@@ -16,5 +16,6 @@ spec:
       - name: backend-api
         # CI pipeline'ınız bu satırı güncelleyecek
         image: docker.io/omerfeyzioglu/projectwizard-backend-api:develop-c1b5170
+        image: docker.io/omerfeyzioglu/projectwizard-backend-api:develop-c1b5170
         ports:
         - containerPort: 8080 # .NET'in çalıştığı port

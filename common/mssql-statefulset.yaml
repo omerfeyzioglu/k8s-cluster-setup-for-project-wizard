@@ -32,7 +32,7 @@ spec:
         - name: MSSQL_SA_PASSWORD 
           # ŞİFREYİ SECRET'TAN ALMAK BEST PRACTICE'TİR. 
           # Şimdilik simülasyon için direkt yazıyoruz, sonra Secret'a taşıyabiliriz.
-          value: "SifrenizCokGuv_1" 
+          value: "securepw1" 
         volumeMounts:
         - name: mssql-data # Aşağıdaki volumeClaimTemplates ile eşleşen isim
           mountPath: /var/opt/mssql # MSSQL verilerini bu diske yazacak

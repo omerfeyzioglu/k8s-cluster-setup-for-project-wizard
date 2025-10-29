@@ -1,0 +1,5 @@
+# Deployment dosyalarında image tag değişiklikleri için merge stratejisi
+# CI/CD'nin güncellediği image tag'leri için "ours" stratejisi
+# (conflict durumunda bizim versiyonu al)
+test/*-deployment.yaml merge=union
+prod/*-deployment.yaml merge=union

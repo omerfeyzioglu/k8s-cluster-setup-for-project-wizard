@@ -1,0 +1,42 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: create-db-wizard-v2 # Job'u tekrar çalıştırabilmek için adını değiştirelim
+  namespace: database
+spec:
+  # Tek bir denemede başarılı olmalı
+  backoffLimit: 4 
+  template:
+    spec:
+      restartPolicy: OnFailure 
+      containers:
+      - name: sql-initializer
+        # MSSQL yönetim araçlarını içeren imajı kullanıyoruz
+        image: mcr.microsoft.com/mssql-tools
+        command: ["/bin/bash", "-c"]
+        args:
+          - |
+            # K8s Service'inin DNS adını kullanarak sunucuya bağlan
+            SERVER_ADDR=mssql-common-svc.database.svc.cluster.local,1433
+            
+            # Sunucunun tamamen başlamasını bekle
+            echo "Waiting for MSSQL to accept connections..."
+            until /opt/mssql-tools/bin/sqlcmd -S $SERVER_ADDR -U sa -P "securepw1" -Q "SELECT 1" &> /dev/null
+            do
+              echo "MSSQL not ready yet. Waiting 5 seconds..."
+              sleep 5
+            done
+            
+            echo "MSSQL is ready. Creating databases..."
+            
+            # Veritabanlarını oluşturma komutu
+            /opt/mssql-tools/bin/sqlcmd -S $SERVER_ADDR -U sa -P "securepw1" -Q "
+            IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = N'wizard_test') CREATE DATABASE wizard_test;
+            IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = N'wizard_prod') CREATE DATABASE wizard_prod;
+            "
+            
+            echo "Databases wizard_test and wizard_prod created successfully."
+
+        env:
+        - name: ACCEPT_EULA
+          value: "Y"

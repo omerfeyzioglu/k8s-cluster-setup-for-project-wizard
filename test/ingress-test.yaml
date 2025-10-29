@@ -1,0 +1,37 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: wizard-test-ingress
+  namespace: test
+  annotations:
+    # Bu kuralı Nginx Ingress Controller'ın kullanmasını sağlıyoruz
+    kubernetes.io/ingress.class: "nginx" 
+spec:
+  rules:
+  - host: test.wizard.local
+    http:
+      paths:
+      # 1. Frontend: Ana kök yolu (/) Frontend Service'e yönlendirir
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend-test-svc
+            port:
+              number: 80
+      # 2. Backend API: Tüm /api/* isteklerini Backend Service'e yönlendirir
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: backend-api-test-svc
+            port:
+              number: 8080
+      # 3. MCP Server: Tüm /mcp/* isteklerini MCP Service'e yönlendirir (Varsayılan port 8081)
+      - path: /mcp
+        pathType: Prefix
+        backend:
+          service:
+            name: mcp-server-test-svc
+            port:
+              number: 8081

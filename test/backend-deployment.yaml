@@ -14,10 +14,12 @@ spec:
     spec:
       containers:
       - name: backend-api
-        # CI pipeline'ınız bu satırı güncelleyecek
-        image: docker.io/omerfeyzioglu/projectwizard-backend-api:develop-c1b5170
+        # CI pipeline'ı bu satırı güncelleyecek
+        image: docker.io/omerfeyzioglu/projectwizard-backend-api:develop-3c79115
         ports:
         - containerPort: 8080 # .NET'in çalıştığı port
+        
+        # --- EKSİK OLAN VE HATAYI ÇÖZECEK BLOK ---
         env:
         - name: ConnectionStrings__DefaultConnection 
           valueFrom:
